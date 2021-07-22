@@ -19,7 +19,7 @@ aws_lambda_events = "0.4.0"
 aws_lambda_events_extended = "0.1.0"
 {{/stream_dynamodb}}
 {{#libs}}
-{{.}} = "../{{.}}"
+{{.}} = { path = "../{{.}}" }
 {{/libs}}`
 
 export const mainTemplate =

@@ -1,9 +1,9 @@
-export const dynamodbStream = `use aws_lambda_events_extended::dynamodb::DynamoDBEvent;
+export const kinesis = `use aws_lambda_events::event::kinesis::{KinesisEvent};
 use lambda_runtime::{handler_fn, Context};
 
 type Error = Box<dyn std::error::Error + Sync + Send + 'static>;
 
-async fn {{name}}_handler(event: DynamoDBEvent, _: Context) -> Result<(), Error> {
+async fn {{name}}_handler(event: KinesisEvent, _: Context) -> Result<(), Error> {
     Ok(())
 }
 

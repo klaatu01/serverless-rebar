@@ -31,7 +31,7 @@ export const defaultDeps: Dependency[] = [
   {
     package: "aws_lambda_events_extended",
     version: "0.1.0",
-    requiredBy: ["stream"]
+    requiredBy: ["dynamodb"]
   },
   {
     package: "lambda_http",
@@ -41,6 +41,6 @@ export const defaultDeps: Dependency[] = [
   {
     package: "lambda_runtime",
     version: "0.3.0",
-    requiredBy: ["stream", "sns", "invoke", "sqs"]
+    requiredBy: ["kinesis", "dynamodb", "sns", "invoke", "sqs"]
   }
 ];

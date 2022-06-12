@@ -8,10 +8,12 @@ import { defaultDeps, resolveDepenencies } from "./deps";
 import { lambda } from "./templates/lambda";
 import { sns } from "./templates/sns";
 import { sqs } from "./templates/sqs";
-import { dynamodbStream } from "./templates/dynamodbStream";
-import { httpGet } from "./templates/http";
+import { kinesis } from "./templates/kinesis";
+import { dynamodb } from "./templates/dynamodb";
+import { http } from "./templates/http";
 import * as io from "./io";
 import { snakeCase } from "snake-case";
+import { eventBridge } from "./templates/eventBridge";
 
 type Functions = {
   [key: string]: FunctionDefinitionHandler | FunctionDefinitionImage;
@@ -47,7 +49,11 @@ export const generate = (config: Config, functions: Functions) => {
   return { cargoToml, templates };
 };
 
-export const writeRebar = (config: Config, cargoToml: CargoToml, templates: any) => {
+export const writeRebar = (
+  config: Config,
+  cargoToml: CargoToml,
+  templates: any
+) => {
   io.writeSetup(config);
   io.writeCargoToml(cargoToml);
   io.writeTemplates(config, templates);
@@ -74,9 +80,9 @@ const generateCargoToml = (
     ...existingCargoToml.package
   };
 
-  !!existingCargoToml.bin 
+  !!existingCargoToml.bin
     ? nonExistingBins.forEach(b => existingCargoToml.bin.push(b))
-    : existingCargoToml.bin = nonExistingBins;
+    : (existingCargoToml.bin = nonExistingBins);
 
   existingCargoToml.dependencies = {
     ...deps.reduce(
@@ -108,11 +114,16 @@ const getTemplate = (eventType: EventType) => {
       return sns;
     case "sqs":
       return sqs;
-    case "stream":
-      return dynamodbStream;
+    case "dynamodb":
+      return dynamodb;
+    case "kinesis":
+      return kinesis;
     case "http":
-      return httpGet;
+      return http;
+    case "eventBridge":
+      return eventBridge;
   }
+  throw new Error("Unrecognised template:" + eventType);
 };
 
 const generateTemplates = (functions: Functions): Template[] => {
@@ -142,8 +153,15 @@ const getEventType = (
     case "sqs":
     case "sns":
     case "http":
-    case "stream":
+    case "eventBridge":
       return eventName;
+    case "stream":
+      const type = fn.events[0][eventName].type;
+      switch (type) {
+        case "dynamodb":
+        case "kinesis":
+          return type;
+      }
   }
   throw new Error("Unrecognised event name:" + eventName);
 };

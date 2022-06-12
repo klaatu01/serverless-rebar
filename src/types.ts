@@ -1,6 +1,4 @@
-export type EventType = "http" | "stream" | "sns" | "invoke" | "sqs";
-type StreamType = "dynamodb" | "kinesis";
-type MethodType = "post" | "get";
+export type EventType = "http" | "stream" | "sns" | "invoke" | "sqs" | "dynamodb" | "kinesis" | "eventBridge" ;
 
 export interface Dependency {
   package: string;

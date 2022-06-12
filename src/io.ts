@@ -20,7 +20,7 @@ export const writeTemplates = (config: Config, templates: any[]) =>
 
 export const writeSetup = (config: Config) => {
   if (!fs.existsSync("./src")) fs.mkdirSync("src");
-  fs.mkdirSync(`src/${config.handlerDir}`);
+  if (!fs.existsSync(`src/${config.handlerDir}`)) fs.mkdirSync(`src/${config.handlerDir}`);
 };
 
 export const writeCargoToml = (cargoToml: any) =>

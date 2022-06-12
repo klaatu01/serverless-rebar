@@ -34,7 +34,7 @@ custom:
 ```
 
 Parameter | Type | Description | Default
---- | --- | ---
+--- | --- | --- | ---
 `libs` | `Array<string>` | Any local libraries you would like to import by default into your handlers | -
 `handlerDir` | `string` | The name of the directory under `src` where binaries are stored. | `bin`
 

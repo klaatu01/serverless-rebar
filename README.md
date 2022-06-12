@@ -1,35 +1,25 @@
 # Serverless Rebar
 
-A scaffolding tool for rust serverless projects.
+Zero Configuration scaffolding tool for serverless rust projects.
 
 ## About
 
-Rebar reads the functions object of your `serverless.yml`, creates a file for each function and does its best to try and provide a relevant `main.rs` depending on the function's [event](https://www.serverless.com/framework/docs/providers/aws/guide/events)
+Rebar uses your `serverless.yml` to create handler templates for a variety of [AWS Lambda Events](https://www.serverless.com/framework/docs/providers/aws/guide/events).
 
 Cool... but why?
 
-Well, the problem with rust + lambda is that each function needs to be its own binary. Here is one pattern that I have found to work well:
+Well, the problem with rust + lambda is that each function needs to be its own binary:
+
 
 ```
 rust-sls/
     ├── cargo.toml
-    ├── serverless.yaml
-    ├── common/
-    │   ├── cargo.toml
-    │   └── src/
-    │       └── lib.rs
-    ├── handler-a/
-    │   ├── cargo.toml
-    │   └── src/
-    │       └── main.rs
-    └── handler-b/
-        ├── cargo.toml
-        └── src/
-            └── main.rs
+    ├── serverless.yml
+    └── src/
+        └── bin/
+            ├── handler_a.rs
+            └── handler_b.rs
 ```
-
-Keeping all of the application logic in a shared library `common`. 
-Each handler has its own `main.rs` that references this `common` lib.
 
 ## Installation
 
@@ -40,9 +30,13 @@ Each handler has its own `main.rs` that references this `common` lib.
 ```
 custom:
   rebar:
-    libs:
-      - <common-lib-name>
+    <parameter>: <value(s)>
 ```
+
+Parameter | Type | Description
+--- | --- | ---
+`libs` | `Array<string>` | Any local libraries you would like to import by default into your handlers
+`handlerDir` | `string` | The name of the directory under `src` where binaries are stored. Default = `bin`
 
 ## Usage
 

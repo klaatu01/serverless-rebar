@@ -1,6 +1,6 @@
 import Serverless from "serverless"
 
-import { Config, Rebar } from "./rebar";
+import { parseConfig, generate, writeRebar } from "./rebar";
 
 class RebarPlugin {
   serverless: Serverless;
@@ -28,10 +28,9 @@ class RebarPlugin {
     const { custom = {}, functions = {} } = service;
     const { rebar = {} } = custom;
 
-    const rebarConfig = Config.parse(rebar);
-    const rebarGenerator = new Rebar(rebarConfig);
-
-    rebarGenerator.generate(functions);
+    const rebarConfig = parseConfig(service.getServiceName(), rebar);
+    const { cargoToml, templates } = generate(rebarConfig, functions);
+    writeRebar(rebarConfig, cargoToml, templates);
   }
 
 }

@@ -13,7 +13,7 @@ import {
 const config: Config = {
   name: "test",
   handlerDir: "bin"
-}
+};
 
 describe("Templates", () => {
   it("Should generate invoke template", () => {
@@ -136,5 +136,18 @@ describe("Templates", () => {
       })
     );
     expect(template.file).toContain("EventBridge");
+  });
+
+  it("Unsupported event type should be ignored", () => {
+    const functions = {
+      unsupported: {
+        handler: "test",
+        events: [{ s3: null }]
+      }
+    };
+
+    const templates = generateTemplates(config, functions as any);
+
+    expect(templates.length).toBe(0);
   });
 });

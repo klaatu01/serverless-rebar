@@ -133,8 +133,11 @@ export const generateTemplates = (config: Config, functions: Functions): Templat
     .map(name => {
       const fn = functions[name];
       const eventType = getEventType(fn);
+      if(!eventType)
+        return null
       return { name: snakeCase(name), eventType };
     })
+    .filter(x => !!x)
     .map(record => ({
       name: record.name,
       eventType: record.eventType,
@@ -166,5 +169,5 @@ const getEventType = (
           return type;
       }
   }
-  throw new Error("Unrecognised event name:" + eventName);
+  return null
 };

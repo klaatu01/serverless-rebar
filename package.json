@@ -1,6 +1,6 @@
 {
   "name": "serverless-rebar",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Plugin for scaffolding rust serverless projects",
   "main": "./dist/src/plugin.js",
   "files": [

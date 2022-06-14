@@ -7,8 +7,9 @@ class RebarPlugin {
   hooks: { [key: string]: Function };
   commands: any;
   options: any;
+  log: any;
 
-  constructor(serverless: Serverless, options: Serverless.Options) {
+  constructor(serverless: Serverless, options: Serverless.Options, { log }) {
     this.serverless = serverless;
     this.options = options;
     this.commands = {
@@ -27,6 +28,7 @@ class RebarPlugin {
       "rebar:generate:generate": this.generate.bind(this),
       "rebar:preview:preview": this.preview.bind(this)
     };
+    this.log = log
   }
 
   generate = () => {
@@ -37,6 +39,7 @@ class RebarPlugin {
     const rebarConfig = parseConfig(service.getServiceName(), rebar);
     const { cargoToml, templates } = generate(rebarConfig, functions);
     writeRebar(rebarConfig, cargoToml, templates);
+    this.log.notice('Rebar Complete')
   };
 
   preview = () => {
@@ -46,9 +49,11 @@ class RebarPlugin {
 
     const rebarConfig = parseConfig(service.getServiceName(), rebar);
     const { cargoToml, templates } = generate(rebarConfig, functions);
+    this.log.notice('Rebar Preview:')
     console.table(
       templates.map(t => ({ name: t.name, eventType: t.eventType, path: t.path }))
     );
+    this.log.notice("run 'serverless rebar generate' to start scaffolding.")
   };
 }
 

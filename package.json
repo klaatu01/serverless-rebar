@@ -16,10 +16,10 @@
   "author": "Charles Ede",
   "license": "MIT",
   "devDependencies": {
-    "@serverless/typescript": "^2.50.0",
+    "@serverless/typescript": "^3.19.0",
     "@types/jest": "^28.1.1",
     "@types/node": "^14.14.41",
-    "@types/serverless": "^1.78.26",
+    "@types/serverless": "^3.12.7",
     "@types/snake-case": "^1.1.2",
     "jest": "^28.1.1",
     "rimraf": "^3.0.2",

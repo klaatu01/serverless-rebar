@@ -1,25 +1,31 @@
-import Serverless from "serverless"
+import Serverless from "serverless";
 
-import { Config, Rebar } from "./rebar";
+import { parseConfig, generate, writeRebar } from "./rebar";
 
 class RebarPlugin {
   serverless: Serverless;
-  hooks: { [key: string]: Function }
-  commands: any
-  options: any
+  hooks: { [key: string]: Function };
+  commands: any;
+  options: any;
 
   constructor(serverless: Serverless, options: Serverless.Options) {
     this.serverless = serverless;
     this.options = options;
     this.commands = {
       rebar: {
-        lifecycleEvents: [
-          "generate",
-        ]
+        commands: {
+          generate: {
+            lifecycleEvents: ["generate"]
+          },
+          preview: {
+            lifecycleEvents: ["preview"]
+          }
+        }
       }
-    }
+    };
     this.hooks = {
-      "rebar:generate": this.generate.bind(this)
+      "rebar:generate:generate": this.generate.bind(this),
+      "rebar:preview:preview": this.preview.bind(this)
     };
   }
 
@@ -28,12 +34,22 @@ class RebarPlugin {
     const { custom = {}, functions = {} } = service;
     const { rebar = {} } = custom;
 
-    const rebarConfig = Config.parse(rebar);
-    const rebarGenerator = new Rebar(rebarConfig);
+    const rebarConfig = parseConfig(service.getServiceName(), rebar);
+    const { cargoToml, templates } = generate(rebarConfig, functions);
+    writeRebar(rebarConfig, cargoToml, templates);
+  };
 
-    rebarGenerator.generate(functions);
-  }
+  preview = () => {
+    const { service } = this.serverless;
+    const { custom = {}, functions = {} } = service;
+    const { rebar = {} } = custom;
 
+    const rebarConfig = parseConfig(service.getServiceName(), rebar);
+    const { cargoToml, templates } = generate(rebarConfig, functions);
+    console.table(
+      templates.map(t => ({ name: t.name, eventType: t.eventType, path: t.path }))
+    );
+  };
 }
 
 module.exports = RebarPlugin;

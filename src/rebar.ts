@@ -32,7 +32,7 @@ export const parseConfig = (name: string, config: any): Config => {
 };
 
 export const generate = (config: Config, functions: Functions) => {
-  const templates = generateTemplates(functions);
+  const templates = generateTemplates(config, functions);
 
   const dependencies = resolveDepenencies(
     defaultDeps,
@@ -52,12 +52,14 @@ export const generate = (config: Config, functions: Functions) => {
 export const writeRebar = (
   config: Config,
   cargoToml: CargoToml,
-  templates: any
+  templates: Template[]
 ) => {
   io.writeSetup(config);
   io.writeCargoToml(cargoToml);
   io.writeTemplates(config, templates);
 };
+
+const binPath = (dir: string, bin: string) => `src/${dir}/${bin}.rs`
 
 const generateCargoToml = (
   existingCargoToml: CargoToml,
@@ -69,7 +71,7 @@ const generateCargoToml = (
 
   const sourceBins = newBins.map((n: string) => ({
     name: n,
-    path: `src/${config.handlerDir}/${n}.rs`
+    path: binPath(config.handlerDir, n)
   }));
   const nonExistingBins = getNonExistingBinaries(existingBins, sourceBins);
 
@@ -126,7 +128,7 @@ const getTemplate = (eventType: EventType) => {
   throw new Error("Unrecognised template:" + eventType);
 };
 
-const generateTemplates = (functions: Functions): Template[] => {
+export const generateTemplates = (config: Config, functions: Functions): Template[] => {
   return Object.getOwnPropertyNames(functions)
     .map(name => {
       const fn = functions[name];
@@ -136,6 +138,7 @@ const generateTemplates = (functions: Functions): Template[] => {
     .map(record => ({
       name: record.name,
       eventType: record.eventType,
+      path: binPath(config.handlerDir, record.name),
       file: mustache.render(getTemplate(record.eventType), {
         name: record.name
       })

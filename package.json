@@ -10,7 +10,8 @@
   ],
   "scripts": {
     "clean": "rimraf dist/",
-    "build": "yarn clean && tsc"
+    "build": "yarn clean && tsc --project tsconfig.build.json",
+    "test": "jest"
   },
   "author": "Charles Ede",
   "license": "MIT",
@@ -22,6 +23,7 @@
     "@types/snake-case": "^1.1.2",
     "jest": "^28.1.1",
     "rimraf": "^3.0.2",
+    "ts-jest": "^28.0.5",
     "typescript": "^4.2.4"
   },
   "dependencies": {

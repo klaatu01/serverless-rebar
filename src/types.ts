@@ -10,6 +10,7 @@ export interface Dependency {
 export interface Template {
   name: string;
   eventType: EventType;
+  path: string
   file: string;
 }
 
